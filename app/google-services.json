@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "671634316884",
+    "firebase_url": "https://ingredients-scanner.firebaseio.com",
+    "project_id": "ingredients-scanner",
+    "storage_bucket": "ingredients-scanner.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:671634316884:android:f12673547ab23362",
+        "android_client_info": {
+          "package_name": "com.example.francesco.ingredientsscanner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "671634316884-gskg6aesjr47gnfkkjvrdnjl1l8jmhms.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.francesco.ingredientsscanner",
+            "certificate_hash": "ca81359d4c0e240ef3e100b3cc9e350f0230bedb"
+          }
+        },
+        {
+          "client_id": "671634316884-rdnfmctculk14i4nfqqg6815da52qh87.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALcWqRhyt-OXqfl5ofEnL6nabWLWYBmcU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "671634316884-rdnfmctculk14i4nfqqg6815da52qh87.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
