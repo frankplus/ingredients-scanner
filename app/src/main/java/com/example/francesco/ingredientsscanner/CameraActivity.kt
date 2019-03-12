@@ -22,21 +22,20 @@ class CameraActivity : AppCompatActivity() {
 
         camera.setLifecycleOwner(this)
         camera.addCameraListener(object : CameraListener() {
-            override fun onPictureTaken(result: PictureResult) {
-                Log.d(TAG, "picture taken")
-
-                //save picture
-                val outputDir = cacheDir
-                val imageFile = File(outputDir, "$name.jpg")
-                result.toFile(imageFile) {
-                    Log.d(TAG, "imagesaved")
-                    val path = it?.path
-                    if(path != null) launchResultActivity(path) else Log.e(TAG, "Error creating image file")
-                }
-            }
+            override fun onPictureTaken(result: PictureResult) { onPicture(result) }
         })
 
         takePicture.setOnClickListener { camera.takePicture() }
+    }
+
+    private fun onPicture(result: PictureResult) {
+        val outputDir = cacheDir
+        val imageFile = File(outputDir, "$name.jpg")
+        result.toFile(imageFile) {
+            Log.d(TAG, "imagesaved")
+            val path = it?.path
+            if(path != null) launchResultActivity(path) else Log.e(TAG, "Error creating image file")
+        }
     }
 
     private fun launchResultActivity(picturePath: String) {
@@ -44,5 +43,6 @@ class CameraActivity : AppCompatActivity() {
             putExtra(EXTRA_PICTUREPATH, picturePath)
         }
         startActivity(intent)
+        finish()
     }
 }

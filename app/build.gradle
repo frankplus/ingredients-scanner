@@ -43,4 +43,16 @@ dependencies {
     //OCR
     apply plugin: 'com.google.gms.google-services'
     implementation 'com.google.firebase:firebase-ml-vision:19.0.2'
+
+    //for csv parsing
+    implementation "com.opencsv:opencsv:4.4"
+
+    //for automatic text correction
+    implementation 'edu.gatech.gtri.bk-tree:bk-tree:1.0'
+
+    //for Levenshtein string comparison
+    implementation group: 'info.debatty', name: 'java-string-similarity', version: '1.1.0'
+
+    //for letter icon in ingredients list view
+    implementation 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
 }
