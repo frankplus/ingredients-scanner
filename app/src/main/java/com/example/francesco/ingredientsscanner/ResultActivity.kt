@@ -2,13 +2,14 @@ package com.example.francesco.ingredientsscanner
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu
 import android.view.MenuItem
 
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_main.*
 
-class MainActivity : AppCompatActivity() {
+class ResultActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,6 +19,12 @@ class MainActivity : AppCompatActivity() {
         fab.setOnClickListener {
             val intent = Intent(this, CameraActivity::class.java)
             startActivity(intent)
+        }
+
+        val picturePath = intent.getStringExtra(EXTRA_PICTUREPATH)
+        if(picturePath != null) {
+            val bitmapPicture = loadBitmapFromFile(picturePath)
+            takenPictureView.setImageBitmap(bitmapPicture)
         }
     }
 
