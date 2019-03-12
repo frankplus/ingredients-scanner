@@ -22,7 +22,7 @@
     </ImageView>
 
     <ListView
-            android:id="@+id/ingredientsList"
+            android:id="@+id/ingredientsListView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:scrollbars="vertical"
