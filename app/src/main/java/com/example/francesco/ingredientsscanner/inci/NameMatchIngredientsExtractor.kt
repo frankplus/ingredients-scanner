@@ -87,7 +87,7 @@ class NameMatchIngredientsExtractor(listIngredients: List<Ingredient>) : Ingredi
         }
 
         //sort by index where the ingredients are found (reconstruct original order)
-        foundIngredients.sortedBy { it.startPositionFound }
+        foundIngredients.sortBy { it.startPositionFound }
 
         return foundIngredients
     }

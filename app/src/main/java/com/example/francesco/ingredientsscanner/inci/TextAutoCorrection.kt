@@ -190,9 +190,7 @@ constructor(wordList: InputStream) {
 
         override fun run() {
             //correct each word
-            wordsToCorrect.forEachIndexed { index, word ->
-                correctedWords[index] = correctWord(word = word)
-            }
+            wordsToCorrect.forEach { correctedWords.add(correctWord(it)) }
 
             doneSignal.countDown()
         }
