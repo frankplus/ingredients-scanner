@@ -61,7 +61,7 @@ class ResultActivity : AppCompatActivity() {
                 false
             ))
 
-            launchOCR(bitmapPicture)
+            launchOCRAndIngredientsExtraction(bitmapPicture)
         }
     }
 
@@ -81,21 +81,18 @@ class ResultActivity : AppCompatActivity() {
         }
     }
 
-    private fun launchOCR(picture: Bitmap) {
+    private fun launchOCRAndIngredientsExtraction(picture: Bitmap) {
         val image = FirebaseVisionImage.fromBitmap(picture)
         val detector = FirebaseVision.getInstance().onDeviceTextRecognizer
 
         val result = detector.processImage(image)
             .addOnSuccessListener { firebaseVisionText ->
-                onTextRecognized(firebaseVisionText.text)
+                val ocrText = firebaseVisionText.text
+                AsyncIngredientsExtraction(this).execute(ocrText)
             }
             .addOnFailureListener {
                 Log.e(TAG, "text extraction failed")
             }
-    }
-
-    private fun onTextRecognized(ocrText: String){
-        AsyncIngredientsExtraction(this).execute(ocrText)
     }
 
 
@@ -132,7 +129,8 @@ class ResultActivity : AppCompatActivity() {
             val activity = activityReference.get()
             if (activity != null && !activity.isFinishing()) {
 
-                //get extractor and corrector from singleton (this may pause until loading is finished)
+                //get extractor and corrector from singleton
+                InciSingleton.load(activity.applicationContext)
                 val extractor = InciSingleton.ingredientsExtractor
                 val corrector = InciSingleton.textCorrector
 
@@ -158,8 +156,7 @@ class ResultActivity : AppCompatActivity() {
                     "ingredients extraction time: " + (endExtractionTime - endCorrectionTime) + " ms"
                 )
 
-                //if the list is empty then return null
-                return if (ingredientList.isEmpty()) null else ingredientList
+                return ingredientList
             }
 
             return null
@@ -173,7 +170,7 @@ class ResultActivity : AppCompatActivity() {
                 activity.progressBar.setVisibility(ProgressBar.INVISIBLE)
 
                 //if something has been found then set the list of recognized ingredients
-                if (ingredients != null) {
+                if (ingredients != null && !ingredients.isEmpty()) {
                     val adapter = AdapterIngredient(
                         activity,
                         ingredients

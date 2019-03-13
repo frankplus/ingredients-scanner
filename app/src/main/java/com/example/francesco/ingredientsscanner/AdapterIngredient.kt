@@ -51,11 +51,11 @@ class AdapterIngredient(
         image.setImageDrawable(drawableLetter)
 
         // Set the inci name
-        val nameText = rowView.inci_name_view
+        val nameText = rowView.inciNameView
         nameText.text = capitalizedInciName
 
         // Set function
-        val functionView = rowView.function_view
+        val functionView = rowView.functionView
         functionView.text = capitalizedFunction
 
         return rowView

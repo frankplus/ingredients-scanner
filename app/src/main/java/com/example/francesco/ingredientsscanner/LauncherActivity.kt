@@ -22,19 +22,14 @@ class LauncherActivity : AppCompatActivity() {
         }
 
         //Get image path of last image
-        val prefs = getSharedPreferences("prefs", MODE_PRIVATE)
-        val pathImage = prefs.getString("imagePath", null)
+        val prefs = getSharedPreferences(CAMERA_SHAREDPREFS, MODE_PRIVATE)
+        val lastPicturePath = prefs.getString(KEY_LASTPICPATH, null)
 
-
-        val intent: Intent
-
-        /**
-         * If already exists a photo, launch result activity to show it
-         * with text attached.
-         * @author Luca Moroldo modified by Francesco Pham
-         */
-        intent = if (pathImage != null) {
-            Intent(this@LauncherActivity, ResultActivity::class.java)
+        //Launch result activity if exists a picture
+        val intent = if (lastPicturePath != null) {
+            Intent(this@LauncherActivity, ResultActivity::class.java).apply {
+                putExtra(EXTRA_PICTUREPATH, lastPicturePath)
+            }
         } else {
             Intent(this@LauncherActivity, CameraActivity::class.java)
         }

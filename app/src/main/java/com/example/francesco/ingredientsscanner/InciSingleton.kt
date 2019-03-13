@@ -15,26 +15,31 @@ object InciSingleton{
     lateinit var ingredientsExtractor: IngredientsExtractor
     lateinit var textCorrector: TextAutoCorrection
     lateinit var listInciIngredients: List<Ingredient>
+    var initialized = false
 
-    fun load(context: Context){
-        //Load list of ingredients from INCI DB
-        val inciDbStream = context.getResources().openRawResource(R.raw.incidb)
-        try {
-            listInciIngredients = Inci.getListIngredients(inciDbStream)
-        } catch (e: IOException) {
-            Log.e(TAG, "Error reading csv")
+    @Synchronized fun load(context: Context){
+        if(!initialized) {
+            //Load list of ingredients from INCI DB
+            val inciDbStream = context.getResources().openRawResource(R.raw.incidb)
+            try {
+                listInciIngredients = Inci.getListIngredients(inciDbStream)
+            } catch (e: IOException) {
+                Log.e(TAG, "Error reading csv")
+            }
+
+
+            //initialize ingredients extractor
+            ingredientsExtractor = NameMatchIngredientsExtractor(listInciIngredients)
+
+            //Load wordlist and initialize text corrector
+            val wordListStream = context.getResources().openRawResource(R.raw.inciwordlist)
+            try {
+                textCorrector = TextAutoCorrection(wordListStream)
+            } catch (e: IOException) {
+                Log.e(TAG, "Error reading word list")
+            }
         }
 
-
-        //initialize ingredients extractor
-        ingredientsExtractor = NameMatchIngredientsExtractor(listInciIngredients)
-
-        //Load wordlist and initialize text corrector
-        val wordListStream = context.getResources().openRawResource(R.raw.inciwordlist)
-        try {
-            textCorrector = TextAutoCorrection(wordListStream)
-        } catch (e: IOException) {
-            Log.e(TAG, "Error reading word list")
-        }
+        initialized = true
     }
 }
