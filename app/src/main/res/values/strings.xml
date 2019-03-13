@@ -6,4 +6,5 @@
     <string name="finding_ingredients">Extracting ingredients</string>
     <string name="no_ingredient_found">No ingredients found</string>
     <string name="letter_icon">Letter icon</string>
+    <string name="wikipedia_searching">Searching on wikipedia</string>
 </resources>

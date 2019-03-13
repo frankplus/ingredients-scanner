@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- ingredient details layout - Francesco Pham (g3) -->
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".IngredientDetailsFragment">
+
+    <Button
+        android:id="@+id/closeButton"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/ic_close"
+        android:layout_height="40dp"
+        android:layout_width="40dp"/>
+
+    <!-- Name -->
+    <TextView
+        android:id="@+id/inciNameView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:textSize="20sp"
+        android:textStyle="italic"
+        android:padding="5sp"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/inciNameView"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- description -->
+            <TextView
+                android:id="@+id/descriptionTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/description_title"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:padding="5sp"/>
+            <TextView
+                android:id="@+id/descriptionView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:paddingStart="10sp"
+                android:paddingEnd="10sp"/>
+
+            <!-- function -->
+            <TextView
+                android:id="@+id/functionTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/function_title"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:padding="5sp"/>
+            <TextView
+                android:id="@+id/functionView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:paddingStart="10sp"
+                android:paddingEnd="10sp"/>
+
+            <!-- wikipedia -->
+            <TextView
+                android:id="@+id/wikipediaTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/wikipedia"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:padding="5sp"/>
+            <TextView
+                android:id="@+id/wikipediaView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:paddingStart="10sp"
+                android:paddingEnd="10sp"
+                android:text="@string/wikipedia_searching"/>
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+    <Button
+        android:id="@+id/searchButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/details_search_button"
+        android:layout_margin="20dp"/>
+
+</android.support.constraint.ConstraintLayout>

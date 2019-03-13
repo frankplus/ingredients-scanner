@@ -55,4 +55,7 @@ dependencies {
 
     //for letter icon in ingredients list view
     implementation 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
+
+    //for request to wikipedia
+    implementation 'com.android.volley:volley:1.1.1'
 }
