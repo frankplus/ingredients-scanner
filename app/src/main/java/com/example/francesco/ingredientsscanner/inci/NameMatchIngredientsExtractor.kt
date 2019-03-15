@@ -21,7 +21,8 @@ class NameMatchIngredientsExtractor(listIngredients: List<Ingredient>) : Ingredi
         this.listIngredients = ArrayList(listIngredients)
 
         //sort by name length so when we search for ingredients in text we match longer names first
-        this.listIngredients.sortedBy { it.inciName.length }
+        this.listIngredients.sortByDescending { it.inciName.length }
+
     }
 
 

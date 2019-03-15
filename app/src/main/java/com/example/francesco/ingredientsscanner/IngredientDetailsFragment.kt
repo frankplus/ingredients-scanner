@@ -100,7 +100,7 @@ class IngredientDetailsFragment : DialogFragment() {
      * @param result The result status of the request
      * @param extract Wikipedia extract returned by the request to wikipedia (null if request failed)
      */
-    fun onWikipediaResult(result: ResultStatus, extract: String?){
+    private fun onWikipediaResult(result: ResultStatus, extract: String?){
         when(result) {
             ResultStatus.RESULT_OK -> wikipediaView.text = extract
             ResultStatus.NOT_FOUND -> wikipediaView.text = getString(R.string.wikipedia_not_found)
