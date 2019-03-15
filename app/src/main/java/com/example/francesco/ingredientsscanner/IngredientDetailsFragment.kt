@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 
 import com.android.volley.Request
@@ -33,12 +34,16 @@ const val ARG_FUNCTION = "function"
  */
 class IngredientDetailsFragment : DialogFragment() {
 
+    private lateinit var wikipediaView: TextView
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_ingredient_details, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        wikipediaView = view.wikipediaView
 
         val inciName = arguments?.run{getString(ARG_NAME)}
         val description = arguments?.run{getString(ARG_DESCRIPTION)}
@@ -64,65 +69,10 @@ class IngredientDetailsFragment : DialogFragment() {
         val functionView = view.functionView
         functionView.text = function
 
-        val wikipediaView = view.wikipediaView
-
-
         val context = activity
-
-        if(context != null && inciName != null) {
-
-            // Get a RequestQueue
-            RequestQueueSingleton.getInstance(context.applicationContext).requestQueue
-
-            // Make url
-            val url = buildWikiUrlRequest(inciName)
-
-            // Make request to wikipedia, searching for ingredient informations.
-            val jsonObjectRequest =
-                JsonObjectRequest(Request.Method.GET, url, null,
-                    Response.Listener<JSONObject> { response ->
-                        try {
-                            val query = response.get("query") as JSONObject
-                            val pages = query.get("pages") as JSONObject
-                            val keys = pages.keys()
-
-                            while (keys.hasNext()) {
-                                val key = keys.next()
-                                if (key != "-1" && pages.get(key) is JSONObject) {
-                                    //show wikipedia extract
-                                    val page = pages.get(key) as JSONObject
-                                    val wikipediaExtract = page.get("extract") as String
-                                    wikipediaView.text = wikipediaExtract
-                                } else {
-                                    //wikipedia page not found
-                                    wikipediaView.text = getString(R.string.wikipedia_not_found)
-                                }
-                            }
-
-                        } catch (e: JSONException) {
-                            Log.e(TAG, "invalid response from wikipedia")
-                            wikipediaView.text = getString(R.string.wikipedia_failed_request)
-                        }
-                    }, Response.ErrorListener {
-                        Log.e(TAG, "Could not send request to wikipedia")
-                        wikipediaView.text = getString(R.string.wikipedia_failed_request)
-                    })
-
-            // Add the request to the RequestQueue.
-            RequestQueueSingleton.getInstance(context).addToRequestQueue(jsonObjectRequest)
-
-        }
+        if(context != null && inciName != null) getWikipediaExtract(context, inciName, ::onWikipediaResult)
     }
 
-    /**
-     * Build URL for the request to wikipedia of an extract of the given ingredient in json format
-     * @param inciName Inci name of the ingredient to search on wikipedia
-     * @return Url string for the request
-     */
-    private fun buildWikiUrlRequest(inciName: String): String {
-        return "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&" +
-                "exintro&explaintext&redirects=1&titles=" + inciName.toLowerCase()
-    }
 
     override fun onResume() {
         super.onResume()
@@ -151,5 +101,7 @@ class IngredientDetailsFragment : DialogFragment() {
         }
     }
 
-
+    fun onWikipediaResult(result: ResultStatus, extract: String?){
+        wikipediaView.text = extract ?: result.toString() //TO CHANGE
+    }
 }
