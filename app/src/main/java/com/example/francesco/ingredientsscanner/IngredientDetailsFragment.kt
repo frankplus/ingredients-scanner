@@ -12,14 +12,11 @@ import androidx.fragment.app.DialogFragment
 
 import com.android.volley.Request
 import com.android.volley.Response
-import com.android.volley.VolleyError
 import com.android.volley.toolbox.JsonObjectRequest
 import kotlinx.android.synthetic.main.fragment_ingredient_details.view.*
 
 import org.json.JSONException
 import org.json.JSONObject
-import com.android.volley.RequestQueue
-import com.android.volley.toolbox.Volley
 
 
 private const val TAG = "IngredDetailsFragment"
@@ -50,7 +47,6 @@ class IngredientDetailsFragment : DialogFragment() {
         //set on click listener on search button
         val searchButton = view.findViewById<Button>(R.id.searchButton)
         searchButton.setOnClickListener {
-            //credit to Luca Moroldo
             val webSearchIntent = Intent(Intent.ACTION_WEB_SEARCH)
             webSearchIntent.putExtra(SearchManager.QUERY, inciName)
             startActivity(webSearchIntent)
@@ -63,62 +59,59 @@ class IngredientDetailsFragment : DialogFragment() {
         // show ingredient information
         val nameView = view.inciNameView
         nameView.text = inciName
-
         val descriptionView = view.descriptionView
         descriptionView.text = description
-
         val functionView = view.functionView
         functionView.text = function
 
         val wikipediaView = view.wikipediaView
 
-        // Get a RequestQueue
-        RequestQueueSingleton.getInstance(getActivity()).getRequestQueue()
 
-        // Make url
-        assert(inciName != null)
-        val url = buildWikiUrlRequest(inciName!!)
+        val context = activity
 
-        // Make request to wikipedia, searching for ingredient informations.
-        val jsonObjectRequest =
-            JsonObjectRequest(Request.Method.GET, url, null, object : Response.Listener<JSONObject>() {
+        if(context != null && inciName != null) {
 
-                fun onResponse(response: JSONObject) {
+            // Get a RequestQueue
+            RequestQueueSingleton.getInstance(context.applicationContext).requestQueue
 
-                    try {
-                        val query = response.get("query") as JSONObject
-                        val pages = query.get("pages") as JSONObject
-                        val keys = pages.keys()
+            // Make url
+            val url = buildWikiUrlRequest(inciName)
 
-                        while (keys.hasNext()) {
-                            val key = keys.next()
-                            if (key != "-1" && pages.get(key) is JSONObject) {
-                                //show wikipedia extract
-                                val page = pages.get(key) as JSONObject
-                                val wikipediaExtract = page.get("extract") as String
-                                wikipediaView.setText(wikipediaExtract)
-                            } else {
-                                //wikipedia page not found
-                                wikipediaView.setText(R.string.wikipedia_not_found)
+            // Make request to wikipedia, searching for ingredient informations.
+            val jsonObjectRequest =
+                JsonObjectRequest(Request.Method.GET, url, null,
+                    Response.Listener<JSONObject> { response ->
+                        try {
+                            val query = response.get("query") as JSONObject
+                            val pages = query.get("pages") as JSONObject
+                            val keys = pages.keys()
+
+                            while (keys.hasNext()) {
+                                val key = keys.next()
+                                if (key != "-1" && pages.get(key) is JSONObject) {
+                                    //show wikipedia extract
+                                    val page = pages.get(key) as JSONObject
+                                    val wikipediaExtract = page.get("extract") as String
+                                    wikipediaView.text = wikipediaExtract
+                                } else {
+                                    //wikipedia page not found
+                                    wikipediaView.text = getString(R.string.wikipedia_not_found)
+                                }
                             }
+
+                        } catch (e: JSONException) {
+                            Log.e(TAG, "invalid response from wikipedia")
+                            wikipediaView.text = getString(R.string.wikipedia_failed_request)
                         }
+                    }, Response.ErrorListener {
+                        Log.e(TAG, "Could not send request to wikipedia")
+                        wikipediaView.text = getString(R.string.wikipedia_failed_request)
+                    })
 
-                    } catch (e: JSONException) {
-                        Log.e(TAG, "invalid response from wikipedia")
-                        wikipediaView.setText(R.string.wikipedia_failed_request)
-                    }
+            // Add the request to the RequestQueue.
+            RequestQueueSingleton.getInstance(context).addToRequestQueue(jsonObjectRequest)
 
-                }
-            }, object : Response.ErrorListener() {
-
-                fun onErrorResponse(error: VolleyError) {
-                    Log.e(TAG, "Could not send request to wikipedia")
-                    wikipediaView.setText(R.string.wikipedia_failed_request)
-                }
-            })
-
-        // Add the request to the RequestQueue.
-        RequestQueueSingleton.getInstance(getActivity()).addToRequestQueue(jsonObjectRequest)
+        }
     }
 
     /**
@@ -131,14 +124,11 @@ class IngredientDetailsFragment : DialogFragment() {
                 "exintro&explaintext&redirects=1&titles=" + inciName.toLowerCase()
     }
 
-    fun onResume() {
+    override fun onResume() {
         super.onResume()
 
         //set dialog fragment size (width and height values in fragment_ingredients_details.xml do not work)
-        val window = getDialog().getWindow()
-        if (window != null) {
-            window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        }
+        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
     }
 
     companion object {
@@ -156,7 +146,7 @@ class IngredientDetailsFragment : DialogFragment() {
             args.putString(ARG_NAME, inciName)
             args.putString(ARG_DESCRIPTION, description)
             args.putString(ARG_FUNCTION, function)
-            fragment.setArguments(args)
+            fragment.arguments = args
             return fragment
         }
     }

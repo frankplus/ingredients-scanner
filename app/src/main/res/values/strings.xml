@@ -6,5 +6,9 @@
     <string name="finding_ingredients">Extracting ingredients</string>
     <string name="no_ingredient_found">No ingredients found</string>
     <string name="letter_icon">Letter icon</string>
-    <string name="wikipedia_searching">Searching on wikipedia</string>
+
+    <string name="wikipedia">Wikipedia:</string>
+    <string name="wikipedia_searching">Searching on wikipedia&#8230;</string>
+    <string name="wikipedia_not_found">Could not find any wikipedia pages.</string>
+    <string name="wikipedia_failed_request">Could not send request to wikipedia.</string>
 </resources>
