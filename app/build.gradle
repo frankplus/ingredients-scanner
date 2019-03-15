@@ -20,6 +20,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
 }
 
 dependencies {
@@ -58,4 +61,7 @@ dependencies {
 
     //for request to wikipedia
     implementation 'com.android.volley:volley:1.1.1'
+
+    //image editing
+    implementation 'com.github.krokyze:ucropnedit:2.2.3'
 }

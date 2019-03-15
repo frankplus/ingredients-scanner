@@ -14,7 +14,8 @@
         <meta-data
             android:name="com.google.firebase.ml.vision.DEPENDENCIES"
             android:value="ocr" />
-        <activity android:name=".CameraActivity">
+        <activity android:name=".CameraActivity"
+                  android:screenOrientation="portrait">
         </activity>
         <activity
                 android:name=".LauncherActivity"
@@ -31,6 +32,11 @@
                 android:label="@string/app_name"
                 android:theme="@style/AppTheme.NoActionBar">
         </activity>
+
+        <activity
+                android:name="com.yalantis.ucrop.UCropActivity"
+                android:screenOrientation="portrait"
+                android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
     </application>
 
 </manifest>

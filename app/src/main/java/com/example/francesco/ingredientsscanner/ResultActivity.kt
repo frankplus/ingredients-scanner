@@ -20,6 +20,11 @@ import android.widget.ProgressBar
 import android.os.AsyncTask
 import android.widget.TextView
 import java.lang.ref.WeakReference
+import com.yalantis.ucrop.UCrop
+import android.net.Uri
+import java.io.File
+import android.graphics.BitmapFactory
+import android.app.Activity
 
 
 private const val TAG = "ResultActivity"
@@ -51,18 +56,8 @@ class ResultActivity : AppCompatActivity() {
         //get picture from extra
         val picturePath = intent.getStringExtra(EXTRA_PICTUREPATH)
         if(picturePath != null) {
-            val bitmapPicture = loadBitmapFromFile(picturePath)
-
-            //set image view
-            takenPictureView.setImageBitmap(
-                Bitmap.createScaledBitmap(
-                    bitmapPicture,
-                    bitmapPicture.width,
-                    bitmapPicture.height,
-                false
-            ))
-
-            launchOCRAndIngredientsExtraction(bitmapPicture)
+            takenPictureView.setOnClickListener { launchImageEditor(picturePath) }
+            analyzeImageUpdateUI(picturePath)
         }
 
         //set on click on ingredient launching IngredientDetailsFragment
@@ -94,13 +89,64 @@ class ResultActivity : AppCompatActivity() {
         }
     }
 
-    private fun launchOCRAndIngredientsExtraction(picture: Bitmap) {
-        val image = FirebaseVisionImage.fromBitmap(picture)
-        val detector = FirebaseVision.getInstance().onDeviceTextRecognizer
+    private fun launchImageEditor(imgPath: String) {
+        val resultImageUri = Uri.fromFile(File(cacheDir, "croppedImg.jpg"))
+        //Build Uri from image path
+        val builder = Uri.Builder().scheme("file").path(imgPath)
+        val captureImageUri = builder.build()
 
+        //Create a new result file and take his Uri
+        val options = UCrop.Options()
+        options.setHideBottomControls(false)
+        options.setFreeStyleCropEnabled(true)
+        options.setToolbarTitle(resources.getString(R.string.crop_image_title))
+        UCrop.of(captureImageUri, resultImageUri)
+            .withOptions(options)
+            .start(this@ResultActivity)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK && requestCode == UCrop.REQUEST_CROP && data != null) {
+            //get cropped image and update UI
+            val resultUri = UCrop.getOutput(data)
+
+            if (resultUri != null) {
+                val picturePath = resultUri.path
+                if(picturePath != null)
+                    analyzeImageUpdateUI(picturePath)
+            }
+        }
+    }
+
+    /**
+     * Show image, extract text from the image, extract ingredients and update UI showing results.
+     * @param picturePath Path of the picture which has to be analyzed
+     */
+    private fun analyzeImageUpdateUI(picturePath: String) {
+
+        val bitmapPicture = loadBitmapFromFile(picturePath)
+
+        //set image view
+        takenPictureView.setImageBitmap(
+            Bitmap.createScaledBitmap(
+                bitmapPicture,
+                bitmapPicture.width,
+                bitmapPicture.height,
+                false
+            ))
+
+        //set message
+        emptyTextView.text = getString(R.string.finding_text)
+
+        //launch text recognizer
+        val image = FirebaseVisionImage.fromBitmap(bitmapPicture)
+        val detector = FirebaseVision.getInstance().onDeviceTextRecognizer
         detector.processImage(image)
             .addOnSuccessListener { firebaseVisionText ->
                 val ocrText = firebaseVisionText.text
+
+                //launch ingredients extraction
                 AsyncIngredientsExtraction(this).execute(ocrText)
             }
             .addOnFailureListener {
