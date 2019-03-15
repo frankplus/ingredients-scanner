@@ -101,6 +101,12 @@ class IngredientDetailsFragment : DialogFragment() {
         }
     }
 
+    /**
+     * This is called when the request to wikipedia has returned
+     * a response and is passed as a listener to getWikipediaExtract
+     * @param result The result status of the request
+     * @param extract Wikipedia extract returned by the request to wikipedia (null if request failed)
+     */
     fun onWikipediaResult(result: ResultStatus, extract: String?){
         when(result) {
             ResultStatus.RESULT_OK -> wikipediaView.text = extract

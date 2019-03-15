@@ -36,14 +36,12 @@ class TextAutoCorrection
  * @param wordList InputStream from the word list
  * @author Francesco Pham
  */
-@Throws(IOException::class)
 constructor(wordList: InputStream) {
 
     //searcher for words in the word list with minimum distance from a given query
     private val searcher: BkTreeSearcher<String>
 
     init {
-
         //open word list
         val reader = BufferedReader(InputStreamReader(wordList))
 

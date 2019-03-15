@@ -15,7 +15,7 @@ enum class ResultStatus{RESULT_OK, NOT_FOUND, REQUEST_FAILED}
 fun getWikipediaExtract(context: Context, searchQuery: String, listener: (ResultStatus, String?) -> Unit) {
 
     // Get a RequestQueue
-    RequestQueueSingleton.getInstance(context.applicationContext).requestQueue
+    AppSingleton.getInstance(context.applicationContext).requestQueue
 
     // Make url
     val url = buildWikiUrlRequest(searchQuery)
@@ -52,7 +52,7 @@ fun getWikipediaExtract(context: Context, searchQuery: String, listener: (Result
             })
 
     // Add the request to the RequestQueue.
-    RequestQueueSingleton.getInstance(context).requestQueue.add(jsonObjectRequest)
+    AppSingleton.getInstance(context).requestQueue.add(jsonObjectRequest)
 }
 
 /**

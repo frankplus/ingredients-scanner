@@ -18,7 +18,7 @@ class LauncherActivity : AppCompatActivity() {
         // load inci db, ingredients extractor, text corrector and allergens manager
         // this can continue after this activity finishes and will end when loading is finished.
         thread(start = true) {
-            InciSingleton.load(applicationContext)
+            AppSingleton.getInstance(applicationContext)
         }
 
         //Get image path of last image

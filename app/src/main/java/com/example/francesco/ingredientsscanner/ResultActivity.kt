@@ -147,9 +147,8 @@ class ResultActivity : AppCompatActivity() {
             if (activity != null && !activity.isFinishing) {
 
                 //get extractor and corrector from singleton
-                InciSingleton.load(activity.applicationContext)
-                val extractor = InciSingleton.ingredientsExtractor
-                val corrector = InciSingleton.textCorrector
+                val extractor = AppSingleton.getInstance(activity.applicationContext).ingredientsExtractor
+                val corrector = AppSingleton.getInstance(activity.applicationContext).textCorrector
 
                 if (ocrText == "")
                     return null
@@ -157,13 +156,11 @@ class ResultActivity : AppCompatActivity() {
                 val startTime = System.currentTimeMillis()
 
                 //correct text
-                correctedText = corrector.correctText(ocrText)
-
+                val corrected = corrector?.correctText(ocrText) ?: ocrText
                 val endCorrectionTime = System.currentTimeMillis()
 
                 //extract ingredients
-                val ingredientList = extractor.findListIngredients(correctedText!!)
-
+                val ingredientList = extractor.findListIngredients(corrected)
                 val endExtractionTime = System.currentTimeMillis()
 
                 //log execution time
@@ -173,6 +170,7 @@ class ResultActivity : AppCompatActivity() {
                     "ingredients extraction time: " + (endExtractionTime - endCorrectionTime) + " ms"
                 )
 
+                correctedText = corrected
                 return ingredientList
             }
 

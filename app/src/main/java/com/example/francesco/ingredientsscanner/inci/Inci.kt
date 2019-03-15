@@ -19,60 +19,52 @@ import com.opencsv.CSVReader
  * http://opencsv.sourceforge.net/
  * @author Francesco Pham
  */
-object Inci {
 
-    private val TAG = "Inci"
+private const val TAG = "Inci"
 
-    private val COL_COSING_REF_NO = 0
-    private val COL_INCI_NAME = 1
-    private val COL_DESCRIPTION = 6
-    private val COL_FUNCTION = 8
+private const val COL_COSING_REF_NO = 0
+private const val COL_INCI_NAME = 1
+private const val COL_DESCRIPTION = 6
+private const val COL_FUNCTION = 8
 
-    /**
-     * Load inci database and return list of Ingredient objects
-     * @param inciDbStream InputStream from inci db csv file
-     * @author Francesco Pham
-     */
-    @Throws(IOException::class)
-    fun getListIngredients(inciDbStream: InputStream): ArrayList<Ingredient> {
-        val reader = BufferedReader(InputStreamReader(inciDbStream))
 
-        val listIngredients = ArrayList<Ingredient>() //initializing list of ingredients
+fun getListIngredients(inciDbStream: InputStream): ArrayList<Ingredient> {
+    val reader = BufferedReader(InputStreamReader(inciDbStream))
 
-        //initialize openCSV reader
-        val csvReader = CSVReader(reader)
+    val listIngredients = ArrayList<Ingredient>() //initializing list of ingredients
 
-        //skip first line containing field names
-        try {
-            csvReader.skip(1)
-        } catch (e: IOException) {
-            Log.e(TAG, "Error skipping first line")
-        }
+    //initialize openCSV reader
+    val csvReader = CSVReader(reader)
 
-        //for each line in the csv add an Ingredient object to the list
-        val iterator = CSVIterator(csvReader)
-        iterator.forEach { line ->
-            if (line.size > COL_FUNCTION) {
-                val element = Ingredient(
-                    cosingRefNo = line[COL_COSING_REF_NO],
-                    inciName = line[COL_INCI_NAME],
-                    description = line[COL_DESCRIPTION],
-                    function = line[COL_FUNCTION] )
-
-                listIngredients.add(element)
-            } else
-                Log.d(TAG, "There is an empty line in the database file, line " + csvReader.getLinesRead())
-        }
-
-        //closing
-        try {
-            reader.close()
-            csvReader.close()
-        } catch (e: IOException) {
-            Log.e(TAG, "Error closing csv reader")
-        }
-
-        return listIngredients
+    //skip first line containing field names
+    try {
+        csvReader.skip(1)
+    } catch (e: IOException) {
+        Log.e(TAG, "Error skipping first line")
     }
 
+    //for each line in the csv add an Ingredient object to the list
+    val iterator = CSVIterator(csvReader)
+    iterator.forEach { line ->
+        if (line.size > COL_FUNCTION) {
+            val element = Ingredient(
+                cosingRefNo = line[COL_COSING_REF_NO],
+                inciName = line[COL_INCI_NAME],
+                description = line[COL_DESCRIPTION],
+                function = line[COL_FUNCTION] )
+
+            listIngredients.add(element)
+        } else
+            Log.d(TAG, "There is an empty line in the database file, line " + csvReader.getLinesRead())
+    }
+
+    //closing
+    try {
+        reader.close()
+        csvReader.close()
+    } catch (e: IOException) {
+        Log.e(TAG, "Error closing csv reader")
+    }
+
+    return listIngredients
 }
