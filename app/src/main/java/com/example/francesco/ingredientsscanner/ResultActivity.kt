@@ -22,10 +22,6 @@ import android.widget.TextView
 import java.lang.ref.WeakReference
 
 
-
-
-
-
 private const val TAG = "ResultActivity"
 
 class ResultActivity : AppCompatActivity() {

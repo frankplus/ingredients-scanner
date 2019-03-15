@@ -3,7 +3,6 @@ package com.example.francesco.ingredientsscanner
 import android.app.SearchManager
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,13 +10,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 
-import com.android.volley.Request
-import com.android.volley.Response
-import com.android.volley.toolbox.JsonObjectRequest
 import kotlinx.android.synthetic.main.fragment_ingredient_details.view.*
-
-import org.json.JSONException
-import org.json.JSONObject
 
 
 private const val TAG = "IngredDetailsFragment"
