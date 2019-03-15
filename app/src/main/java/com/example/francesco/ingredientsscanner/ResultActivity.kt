@@ -22,6 +22,10 @@ import android.widget.TextView
 import java.lang.ref.WeakReference
 
 
+
+
+
+
 private const val TAG = "ResultActivity"
 
 class ResultActivity : AppCompatActivity() {
@@ -48,6 +52,7 @@ class ResultActivity : AppCompatActivity() {
         analyzedTextView = TextView(this)
         ingredientsListView.addHeaderView(analyzedTextView)
 
+        //get picture from extra
         val picturePath = intent.getStringExtra(EXTRA_PICTUREPATH)
         if(picturePath != null) {
             val bitmapPicture = loadBitmapFromFile(picturePath)
@@ -62,6 +67,18 @@ class ResultActivity : AppCompatActivity() {
             ))
 
             launchOCRAndIngredientsExtraction(bitmapPicture)
+        }
+
+        //set on click on ingredient launching IngredientDetailsFragment
+        ingredientsListView.setOnItemClickListener { parent, _, position, _ ->
+            val selectedIngredient = parent.getItemAtPosition(position) as Ingredient
+
+            val inciName = selectedIngredient.inciName
+            val description = selectedIngredient.description
+            val function = selectedIngredient.function
+            val fm = supportFragmentManager
+            val detailsFragment = IngredientDetailsFragment.newInstance(inciName, description, function)
+            detailsFragment.show(fm, "fragment_ingredient_details")
         }
     }
 
@@ -85,7 +102,7 @@ class ResultActivity : AppCompatActivity() {
         val image = FirebaseVisionImage.fromBitmap(picture)
         val detector = FirebaseVision.getInstance().onDeviceTextRecognizer
 
-        val result = detector.processImage(image)
+        detector.processImage(image)
             .addOnSuccessListener { firebaseVisionText ->
                 val ocrText = firebaseVisionText.text
                 AsyncIngredientsExtraction(this).execute(ocrText)
@@ -111,8 +128,8 @@ class ResultActivity : AppCompatActivity() {
         override fun onPreExecute() {
             //show progress bar
             val activity = activityReference.get()
-            if (activity != null && !activity.isFinishing()) {
-                activity.progressBar.setVisibility(ProgressBar.VISIBLE)
+            if (activity != null && !activity.isFinishing) {
+                activity.progressBar.visibility = ProgressBar.VISIBLE
                 activity.emptyTextView.setText(R.string.finding_ingredients)
             }
         }
@@ -127,7 +144,7 @@ class ResultActivity : AppCompatActivity() {
             val ocrText = strings[0]
 
             val activity = activityReference.get()
-            if (activity != null && !activity.isFinishing()) {
+            if (activity != null && !activity.isFinishing) {
 
                 //get extractor and corrector from singleton
                 InciSingleton.load(activity.applicationContext)
@@ -165,9 +182,9 @@ class ResultActivity : AppCompatActivity() {
         override fun onPostExecute(ingredients: List<Ingredient>?) {
 
             val activity = activityReference.get()
-            if (activity != null && !activity.isFinishing()) {
+            if (activity != null && !activity.isFinishing) {
 
-                activity.progressBar.setVisibility(ProgressBar.INVISIBLE)
+                activity.progressBar.visibility = ProgressBar.INVISIBLE
 
                 //if something has been found then set the list of recognized ingredients
                 if (ingredients != null && !ingredients.isEmpty()) {
@@ -175,7 +192,7 @@ class ResultActivity : AppCompatActivity() {
                         activity,
                         ingredients
                     )
-                    activity.ingredientsListView.setAdapter(adapter)
+                    activity.ingredientsListView.adapter = adapter
 
                     //print analyzed text highlighting the recognized ingredients
                     val analyzedText = SpannableString(this.correctedText)
@@ -185,9 +202,9 @@ class ResultActivity : AppCompatActivity() {
                             ingred.startPositionFound!!, ingred.endPositionFound!! + 1, 0
                         )
                     }
-                    activity.analyzedTextView.setText(analyzedText)
+                    activity.analyzedTextView.text = analyzedText
                 } else {
-                    activity.ingredientsListView.setAdapter(null)
+                    activity.ingredientsListView.adapter = null
                     activity.emptyTextView.setText(R.string.no_ingredient_found)
                 }
             }
