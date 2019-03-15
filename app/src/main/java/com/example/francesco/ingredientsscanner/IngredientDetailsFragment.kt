@@ -102,6 +102,11 @@ class IngredientDetailsFragment : DialogFragment() {
     }
 
     fun onWikipediaResult(result: ResultStatus, extract: String?){
-        wikipediaView.text = extract ?: result.toString() //TO CHANGE
+        when(result) {
+            ResultStatus.RESULT_OK -> wikipediaView.text = extract
+            ResultStatus.NOT_FOUND -> wikipediaView.text = getString(R.string.wikipedia_not_found)
+            ResultStatus.REQUEST_FAILED -> wikipediaView.text = getString(R.string.wikipedia_failed_request)
+        }
+
     }
 }
