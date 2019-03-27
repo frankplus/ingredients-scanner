@@ -23,7 +23,6 @@ import java.lang.ref.WeakReference
 import com.yalantis.ucrop.UCrop
 import android.net.Uri
 import java.io.File
-import android.graphics.BitmapFactory
 import android.app.Activity
 
 
