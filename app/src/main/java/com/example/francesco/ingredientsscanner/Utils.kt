@@ -11,7 +11,7 @@ import java.io.IOException
  * @param filePath name of a jpeg file to convert to bitmap
  * @return image converted to bitmap
  */
-fun loadBitmapFromFile(filePath: String): Bitmap {
+fun loadBitmapFromFile(filePath: String): Bitmap? {
     var bitmap = BitmapFactory.decodeFile(filePath)
 
     //rotate pic according to EXIF data (Francesco Pham)

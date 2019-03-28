@@ -23,12 +23,12 @@ class LauncherActivity : AppCompatActivity() {
 
         //Get image path of last image
         val prefs = getSharedPreferences(CAMERA_SHAREDPREFS, MODE_PRIVATE)
-        val lastPicturePath = prefs.getString(KEY_LASTPICPATH, null)
+        val lastPicturePath = prefs.getString(KEY_LASTPICURI, null)
 
         //Launch result activity if exists a picture
         val intent = if (lastPicturePath != null) {
             Intent(this@LauncherActivity, ResultActivity::class.java).apply {
-                putExtra(EXTRA_PICTUREPATH, lastPicturePath)
+                putExtra(EXTRA_PICTUREURI, lastPicturePath)
             }
         } else {
             Intent(this@LauncherActivity, CameraActivity::class.java)

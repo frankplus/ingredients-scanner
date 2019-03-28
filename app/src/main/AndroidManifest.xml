@@ -3,6 +3,8 @@
           package="com.example.francesco.ingredientsscanner">
 
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
 
     <application
             android:allowBackup="true"

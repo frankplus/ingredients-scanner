@@ -24,6 +24,7 @@ import com.yalantis.ucrop.UCrop
 import android.net.Uri
 import java.io.File
 import android.app.Activity
+import android.provider.MediaStore
 
 
 private const val TAG = "ResultActivity"
@@ -53,10 +54,10 @@ class ResultActivity : AppCompatActivity() {
         ingredientsListView.addHeaderView(analyzedTextView)
 
         //get picture from extra
-        val picturePath = intent.getStringExtra(EXTRA_PICTUREPATH)
-        if(picturePath != null) {
-            takenPictureView.setOnClickListener { launchImageEditor(picturePath) }
-            analyzeImageUpdateUI(picturePath)
+        val pictureUri = Uri.parse(intent.getStringExtra(EXTRA_PICTUREURI))
+        if(pictureUri != null) {
+            takenPictureView.setOnClickListener { launchImageEditor(pictureUri) }
+            analyzeImageUpdateUI(pictureUri)
         }
 
         //set on click on ingredient launching IngredientDetailsFragment
@@ -88,18 +89,15 @@ class ResultActivity : AppCompatActivity() {
         }
     }
 
-    private fun launchImageEditor(imgPath: String) {
+    private fun launchImageEditor(picture: Uri) {
         val resultImageUri = Uri.fromFile(File(cacheDir, "croppedImg.jpg"))
-        //Build Uri from image path
-        val builder = Uri.Builder().scheme("file").path(imgPath)
-        val captureImageUri = builder.build()
 
         //Create a new result file and take his Uri
         val options = UCrop.Options()
         options.setHideBottomControls(false)
         options.setFreeStyleCropEnabled(true)
         options.setToolbarTitle(resources.getString(R.string.crop_image_title))
-        UCrop.of(captureImageUri, resultImageUri)
+        UCrop.of(picture, resultImageUri)
             .withOptions(options)
             .start(this@ResultActivity)
     }
@@ -109,22 +107,17 @@ class ResultActivity : AppCompatActivity() {
         if (resultCode == Activity.RESULT_OK && requestCode == UCrop.REQUEST_CROP && data != null) {
             //get cropped image and update UI
             val resultUri = UCrop.getOutput(data)
-
-            if (resultUri != null) {
-                val picturePath = resultUri.path
-                if(picturePath != null)
-                    analyzeImageUpdateUI(picturePath)
-            }
+            if(resultUri != null) analyzeImageUpdateUI(resultUri)
         }
     }
 
     /**
      * Show image, extract text from the image, extract ingredients and update UI showing results.
-     * @param picturePath Path of the picture which has to be analyzed
+     * @param pictureUri Path of the picture which has to be analyzed
      */
-    private fun analyzeImageUpdateUI(picturePath: String) {
+    private fun analyzeImageUpdateUI(pictureUri: Uri) {
 
-        val bitmapPicture = loadBitmapFromFile(picturePath)
+        val bitmapPicture = MediaStore.Images.Media.getBitmap(this.contentResolver, pictureUri)
 
         //set image view
         takenPictureView.setImageBitmap(
