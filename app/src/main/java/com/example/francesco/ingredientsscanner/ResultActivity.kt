@@ -24,7 +24,9 @@ import com.yalantis.ucrop.UCrop
 import android.net.Uri
 import java.io.File
 import android.app.Activity
+import android.graphics.ImageDecoder
 import android.provider.MediaStore
+import java.io.IOException
 
 
 private const val TAG = "ResultActivity"
@@ -117,7 +119,8 @@ class ResultActivity : AppCompatActivity() {
      */
     private fun analyzeImageUpdateUI(pictureUri: Uri) {
 
-        val bitmapPicture = MediaStore.Images.Media.getBitmap(this.contentResolver, pictureUri)
+        val source = ImageDecoder.createSource(contentResolver, pictureUri)
+        val bitmapPicture = ImageDecoder.decodeBitmap(source)
 
         //set image view
         takenPictureView.setImageBitmap(
@@ -132,18 +135,24 @@ class ResultActivity : AppCompatActivity() {
         emptyTextView.text = getString(R.string.finding_text)
 
         //launch text recognizer
-        val image = FirebaseVisionImage.fromBitmap(bitmapPicture)
-        val detector = FirebaseVision.getInstance().onDeviceTextRecognizer
-        detector.processImage(image)
-            .addOnSuccessListener { firebaseVisionText ->
-                val ocrText = firebaseVisionText.text
+        try {
+            val image = FirebaseVisionImage.fromFilePath(this, pictureUri)
 
-                //launch ingredients extraction
-                AsyncIngredientsExtraction(this).execute(ocrText)
-            }
-            .addOnFailureListener {
-                Log.e(TAG, "text extraction failed")
-            }
+            val detector = FirebaseVision.getInstance().onDeviceTextRecognizer
+            detector.processImage(image)
+                .addOnSuccessListener { firebaseVisionText ->
+                    val ocrText = firebaseVisionText.text
+
+                    //launch ingredients extraction
+                    AsyncIngredientsExtraction(this).execute(ocrText)
+                }
+                .addOnFailureListener {
+                    Log.e(TAG, "text extraction failed")
+                }
+        } catch (e: IOException) {
+            Log.e(TAG, "Failed loading image")
+        }
+
     }
 
 
